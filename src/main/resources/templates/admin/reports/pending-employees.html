@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('Pending Employee Approvals')}"></head>
+
+<body>
+
+<!-- Navbar -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="main-container">
+
+    <header class="page-header">
+        <h1 class="page-title">Pending Employee Approvals</h1>
+
+        <a href="/admin/employees" class="btn btn-secondary">
+            Back to Employees
+        </a>
+    </header>
+
+    <div class="table-container">
+
+        <!-- No employees -->
+        <div th:if="${#lists.isEmpty(employees)}"
+             style="padding:4rem;text-align:center;color:var(--text-muted);">
+
+            <i class="fas fa-user-clock" style="font-size:3rem;margin-bottom:1rem;"></i>
+            <p>No pending approvals.</p>
+
+        </div>
+
+        <!-- Pending employees table -->
+        <table th:if="${not #lists.isEmpty(employees)}">
+
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr th:each="emp : ${employees}">
+
+                    <td>
+                        <div style="font-weight:600"
+                             th:text="${emp.firstName + ' ' + emp.lastName}">
+                        </div>
+
+                        <div style="font-size:12px;color:gray"
+                             th:text="${emp.empId}">
+                        </div>
+                    </td>
+
+                    <td th:text="${emp.departmentName}"></td>
+
+                    <td th:text="${emp.designation}"></td>
+
+                    <td style="display:flex;gap:10px;">
+
+                        <!-- APPROVE -->
+                        <a th:href="@{/admin/employees/approve/{id}(id=${emp.empId})}"
+                           class="btn btn-success"
+                           style="padding:6px 14px">
+
+                            Approve
+
+                        </a>
+
+                        <!-- REJECT -->
+                        <a th:href="@{/admin/employees/deactivate/{id}(id=${emp.empId})}"
+                           class="btn btn-danger"
+                           style="padding:6px 14px"
+                           onclick="return confirm('Reject this employee?')">
+
+                            Reject
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+</body>
+</html>

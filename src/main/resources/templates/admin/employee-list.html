@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('Employee Management')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="main-container">
+
+<!-- SUCCESS MESSAGE -->
+<div th:if="${param.success}" class="alert alert-success"
+style="background-color:#f0fdf4;border:1px solid #dcfce7;color:#15803d;padding:1rem;border-radius:0.5rem;margin-bottom:2rem;font-size:0.875rem;display:flex;align-items:center;gap:0.75rem;">
+<i class="fas fa-check-circle"></i>
+<span>Employee account has been saved successfully.</span>
+</div>
+
+<header class="page-header">
+
+<h1 class="page-title">Employee Management</h1>
+
+<div style="display:flex;align-items:center;gap:1rem;">
+
+<!-- SEARCH -->
+<form action="/admin/employees" method="get" class="search-container" style="position:relative;">
+<i class="fas fa-search"
+style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
+
+<input type="text"
+name="search"
+th:value="${search}"
+style="padding-left:2.5rem;width:350px;"
+placeholder="Search by name, ID, dept, or role...">
+</form>
+
+<!-- ADD EMPLOYEE -->
+<a href="/admin/employees/add" class="btn btn-primary">
+<i class="fas fa-user-plus"></i> Add Employee
+</a>
+
+<!-- PENDING APPROVAL PANEL -->
+<a href="/admin/pending-employees" class="btn btn-warning">
+<i class="fas fa-user-clock"></i> Pending Approvals
+</a>
+
+</div>
+
+</header>
+
+
+<!-- STATUS DASHBOARD CARDS -->
+
+<div style="display:flex;gap:20px;margin-bottom:25px;">
+
+<!-- PENDING -->
+<a href="/admin/employees?status=0" style="flex:1;text-decoration:none;">
+<div style="background:#fef3c7;padding:18px;border-radius:10px;">
+<div style="font-size:14px;color:#92400e;">Pending Approval</div>
+<div style="font-size:26px;font-weight:700;" th:text="${pendingCount}">0</div>
+</div>
+</a>
+
+<!-- ACTIVE -->
+<a href="/admin/employees?status=1" style="flex:1;text-decoration:none;">
+<div style="background:#d1fae5;padding:18px;border-radius:10px;">
+<div style="font-size:14px;color:#065f46;">Active Employees</div>
+<div style="font-size:26px;font-weight:700;" th:text="${activeCount}">0</div>
+</div>
+</a>
+
+<!-- INACTIVE -->
+<a href="/admin/employees?status=2" style="flex:1;text-decoration:none;">
+<div style="background:#fee2e2;padding:18px;border-radius:10px;">
+<div style="font-size:14px;color:#991b1b;">Inactive Employees</div>
+<div style="font-size:26px;font-weight:700;" th:text="${inactiveCount}">0</div>
+</div>
+</a>
+
+</div>
+
+
+<div class="table-container">
+
+<!-- EMPTY STATE -->
+<div th:if="${#lists.isEmpty(employees)}"
+style="padding:4rem;text-align:center;color:var(--text-muted);">
+
+<i class="fas fa-users-slash" style="font-size:3rem;margin-bottom:1rem;"></i>
+<p>No employees found matching your criteria.</p>
+
+</div>
+
+
+<table th:if="${not #lists.isEmpty(employees)}">
+
+<thead>
+<tr>
+<th>Employee</th>
+<th>Details</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+
+<tbody>
+
+<tr th:each="emp : ${employees}">
+
+<td>
+
+<div style="font-weight:600;color:var(--text-dark);"
+th:text="${emp.firstName + ' ' + emp.lastName}">
+</div>
+
+<div style="font-size:0.75rem;color:var(--text-muted);"
+th:text="${emp.empId}">
+</div>
+
+</td>
+
+
+<td>
+
+<div style="font-size:0.875rem;" th:text="${emp.designation}"></div>
+
+<div style="font-size:0.75rem;color:var(--text-muted);"
+th:text="${emp.departmentName}">
+</div>
+
+</td>
+
+
+<td>
+
+<span th:if="${emp.isActive == 1}" class="badge badge-success">Active</span>
+
+<span th:if="${emp.isActive == 0}" class="badge badge-warning">Pending</span>
+
+<span th:if="${emp.isActive == 2}" class="badge badge-danger">Inactive</span>
+
+</td>
+
+
+<td style="display:flex;gap:0.5rem;">
+
+<!-- APPROVE -->
+<a th:if="${emp.isActive == 0}"
+th:href="@{/admin/employees/approve/{id}(id=${emp.empId})}"
+style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid var(--border);color:#16a34a;"
+title="Approve Employee"
+onclick="return confirm('Approve this employee account?')">
+
+<i class="fas fa-user-check"></i>
+
+</a>
+
+
+<!-- EDIT -->
+<a th:href="@{/admin/employees/edit/{id}(id=${emp.empId})}"
+style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid var(--border);color:var(--text-muted);">
+
+<i class="fas fa-edit"></i>
+
+</a>
+
+
+<!-- DEACTIVATE -->
+<a th:if="${emp.isActive == 1}"
+th:href="@{/admin/employees/deactivate/{id}(id=${emp.empId})}"
+style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid var(--border);color:#ef4444;"
+onclick="return confirm('Deactivate this employee?')">
+
+<i class="fas fa-user-slash"></i>
+
+</a>
+
+
+<!-- REACTIVATE -->
+<a th:if="${emp.isActive == 2}"
+th:href="@{/admin/employees/reactivate/{id}(id=${emp.empId})}"
+style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid var(--border);color:#10b981;">
+
+<i class="fas fa-user-check"></i>
+
+</a>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+
+<!-- PAGINATION -->
+<div th:replace="~{fragments/pagination :: pagination(page=${page}, baseUrl='/admin/employees', sortParams=null, extraParams=${search != null ? '&search=' + search : ''})}">
+</div>
+
+</div>
+
+</main>
+
+</body>
+</html>

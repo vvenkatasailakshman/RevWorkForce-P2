@@ -1,0 +1,134 @@
+package com.rev.app.controller;
+
+import com.rev.app.dto.EmployeeDto;
+import com.rev.app.dto.LeaveDto;
+import com.rev.app.entity.User;
+import com.rev.app.service.UserService;
+import com.rev.app.service.EmployeeService;
+import com.rev.app.service.LeaveService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+@Controller
+@RequestMapping("/manager/leaves")
+public class ManagerLeaveController {
+
+    @Autowired
+    private LeaveService leaveService;
+
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping
+    public String viewTeamLeaves(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "leaveId") String sortBy,
+            Model model, Principal principal) {
+        if (principal != null) {
+            String email = principal.getName();
+            Optional<User> userOpt = userService.findByEmail(email);
+            if (userOpt.isPresent()) {
+                EmployeeDto manager = null;
+                try {
+                    manager = employeeService.getEmployeeByUserId(userOpt.get().getUserId());
+                } catch (Exception e) {}
+                if (manager != null) {
+                    List<EmployeeDto> team = employeeService.getDirectReports(manager.getEmpId());
+                    org.springframework.data.domain.Page<LeaveDto> pendingLeavesPage = leaveService.getPendingLeavesForManager(manager.getEmpId(), page, size, sortBy);
+                    List<com.rev.app.entity.LeaveType> leaveTypes = leaveService.getAllLeaveTypes();
+                    
+                    Map<String, Map<Long, Integer>> teamBalancesMap = new HashMap<>();
+                    for (EmployeeDto emp : team) {
+                        List<com.rev.app.entity.LeaveBalance> balances = leaveService.getLeaveBalances(emp.getEmpId());
+                        Map<Long, Integer> balanceByTypeId = new HashMap<>();
+                        for (com.rev.app.entity.LeaveBalance b : balances) {
+                            balanceByTypeId.put(b.getLeaveType().getLeaveTypeId(), b.getBalanceDays());
+                        }
+                        teamBalancesMap.put(emp.getEmpId(), balanceByTypeId);
+                    }
+
+                    model.addAttribute("team", team);
+                    model.addAttribute("pendingLeaves", pendingLeavesPage.getContent());
+                    model.addAttribute("pendingPage", pendingLeavesPage);
+                    model.addAttribute("teamBalancesMap", teamBalancesMap);
+                    model.addAttribute("leaveTypes", leaveTypes);
+                }
+            }
+        }
+        return "manager/team-leaves";
+    }
+
+    @PostMapping("/approve")
+    public String approveLeave(@RequestParam Long leaveId, @RequestParam(required = false) String comment, Principal principal) {
+        if (principal != null) {
+            String email = principal.getName();
+            Optional<User> userOpt = userService.findByEmail(email);
+            if (userOpt.isPresent()) {
+                EmployeeDto manager = null;
+                try {
+                    manager = employeeService.getEmployeeByUserId(userOpt.get().getUserId());
+                } catch (Exception e) {}
+                if (manager != null) {
+                    leaveService.approveLeave(leaveId, manager.getEmpId(), comment);
+                }
+            }
+        }
+        return "redirect:/manager/leaves?success=approved";
+    }
+
+    @PostMapping("/reject")
+    public String rejectLeave(@RequestParam Long leaveId, @RequestParam String comment, Principal principal) {
+        if (comment == null || comment.trim().isEmpty()) {
+            return "redirect:/manager/leaves?error=comment_required";
+        }
+        if (principal != null) {
+            String email = principal.getName();
+            Optional<User> userOpt = userService.findByEmail(email);
+            if (userOpt.isPresent()) {
+                EmployeeDto manager = null;
+                try {
+                    manager = employeeService.getEmployeeByUserId(userOpt.get().getUserId());
+                } catch (Exception e) {}
+                if (manager != null) {
+                    leaveService.rejectLeave(leaveId, manager.getEmpId(), comment);
+                }
+            }
+        }
+        return "redirect:/manager/leaves?success=rejected";
+    }
+
+    @GetMapping("/calendar")
+    public String viewTeamCalendar(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "leaveId") String sortBy,
+            Model model, Principal principal) {
+        if (principal != null) {
+            String email = principal.getName();
+            Optional<User> userOpt = userService.findByEmail(email);
+            if (userOpt.isPresent()) {
+                EmployeeDto manager = null;
+                try {
+                    manager = employeeService.getEmployeeByUserId(userOpt.get().getUserId());
+                } catch (Exception e) {}
+                if (manager != null) {
+                    org.springframework.data.domain.Page<LeaveDto> teamLeavesPage = leaveService.getTeamLeaves(manager.getEmpId(), page, size, sortBy);
+                    model.addAttribute("teamLeaves", teamLeavesPage.getContent());
+                    model.addAttribute("page", teamLeavesPage);
+                }
+            }
+        }
+        return "manager/team-calendar";
+    }
+}
