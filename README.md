@@ -1,50 +1,187 @@
-<<<<<<< HEAD
-# RevWorkforce HRM Application
+# RevWorkForce – Human Resource Management System (HRM)
 
-RevWorkforce is a full-stack monolithic Human Resource Management (HRM) web application.
+RevWorkForce is a full-stack Human Resource Management (HRM) web application designed to automate and streamline HR operations within an organization. The system provides a centralized platform for managing employee records, leave applications, and performance reviews while ensuring secure role-based access for employees, managers, and administrators.
 
-## Prerequisites
+---
 
-- **Java 21**: Ensure you have JDK 21 installed.
-- **Oracle Database**: The application is configured to use Oracle. Ensure an instance is running.
-- **Maven**: The project includes a Maven wrapper (`mvnw`), so a local Maven installation is optional.
+## 🚀 Project Overview
 
-## Setup Instructions
+Many organizations still manage HR processes manually or across multiple systems. RevWorkForce solves this problem by providing a unified platform that improves efficiency, transparency, and data management.
 
-### 1. Database Configuration
-Open `src/main/resources/application.properties` and update the datasource credentials to match your local Oracle setup:
-```properties
+The application enables HR teams to manage workforce operations while allowing employees to access their information, request leaves, and track performance through a simple and intuitive interface.
+
+---
+
+## 🛠️ Technology Stack
+
+**Backend**
+
+* Java 21
+* Spring Boot
+* Spring Data JPA
+* Spring Security
+* REST APIs
+
+**Frontend**
+
+* HTML
+* CSS
+* JavaScript
+* Thymeleaf
+
+**Database**
+
+* Oracle Database
+
+**Build Tool**
+
+* Maven (Maven Wrapper included)
+
+**Testing Tools**
+
+* Postman (for API testing)
+
+---
+
+## 📂 Project Structure
+
+```
+src/main/java/com/rev/app
+│
+├── controller        → Web controllers (Thymeleaf views)
+├── rest              → REST API controllers
+├── service           → Business logic layer
+├── repository        → Data access layer
+├── entity            → JPA entity classes
+│
+src/main/resources
+│
+├── templates         → HTML views
+├── static            → CSS, JavaScript, images
+├── application.properties
+└── schema.sql
+```
+
+---
+
+## ⚙️ Prerequisites
+
+Before running the project, ensure the following software is installed:
+
+* **Java JDK 21**
+* **Oracle Database**
+* **Git**
+* **Postman** (optional for API testing)
+
+---
+
+## 🔧 Setup Instructions
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/vvenkatasailakshman/RevWorkForce-P2.git
+cd RevWorkForce-P2
+```
+
+---
+
+### 2. Configure Database
+
+Open:
+
+```
+src/main/resources/application.properties
+```
+
+Update the Oracle database credentials:
+
+```
 spring.datasource.url=jdbc:oracle:thin:@localhost:1521:xe
 spring.datasource.username=YOUR_USERNAME
 spring.datasource.password=YOUR_PASSWORD
 ```
 
-### 2. Schema Initialization
-Run the SQL script located at:
-`src/main/resources/schema.sql`
-This will create all necessary tables for employees, leaves, performance reviews, etc.
+---
 
-### 3. Build & Run
-From the project root directory, run the following command:
-```powershell
+### 3. Initialize Database Schema
+
+Run the SQL script:
+
+```
+src/main/resources/schema.sql
+```
+
+This will create the required tables for employees, leaves, and performance management.
+
+---
+
+### 4. Run the Application
+
+From the project root directory run:
+
+```
 ./mvnw spring-boot:run
 ```
 
-## Accessing the Application
+---
 
-- **Web Interface**: [http://localhost:8080](http://localhost:8080)
-- **Login**: Use the `users` table entries to login. (Default password for new employees created via Admin is `Welcome@123`).
-- **REST API**: Detailed endpoints are available under `/api/**` for Postman testing.
+## 🌐 Access the Application
 
-## Project Structure
+After starting the server:
 
-- `src/main/java/com/rev/app/controller`: Thymeleaf Web Controllers.
-- `src/main/java/com/rev/app/rest`: REST API Controllers.
-- `src/main/java/com/rev/app/service`: Business Logic.
-- `src/main/java/com/rev/app/entity`: JPA Entities.
-- `src/main/resources/templates`: HTML Views.
-- `src/main/resources/static`: Assets (CSS/JS).
-=======
-# RevWorkForce-P2
-RevWorkforce is a full-stack monolithic Human Resource Management (HRM) web application designed to streamline employee management, leave tracking, and performance review processes.  The application features responsive design, role-based dashboards, and automated notifications.
->>>>>>> 6deb37fa822a6942e24afb40b218b6f0353a2840
+**Application URL**
+
+```
+http://localhost:8080
+```
+
+**REST API Base URL**
+
+```
+http://localhost:8080/api
+```
+
+You can test API endpoints using **Postman**.
+
+---
+
+## 🔑 Key Features
+
+* Employee Management
+* Leave Request and Approval Workflow
+* Performance Review System
+* Role-Based Access (Admin / Manager / Employee)
+* REST API Support
+* Responsive User Interface
+* Secure Authentication and Authorization
+
+---
+
+## 👨‍💻 My Role in the Project
+
+* Led the development of the **RevWorkForce HRM system**
+* Designed **application architecture and database schema**
+* Implemented **Spring Boot backend services and REST APIs**
+* Integrated **Oracle database using JPA**
+* Developed **frontend views using Thymeleaf**
+* Managed **Git version control and project integration**
+
+---
+
+## 🎯 Future Enhancements
+
+* Email notification system for leave approvals
+* Employee attendance tracking
+* Payroll management module
+* Mobile-friendly UI improvements
+* Advanced analytics dashboard
+
+---
+
+## 📌 Author
+
+**Venkata Sai Lakshman Viswanadhapalli**
+
+Junior Architect / Database Administrator
+Skilled in Java, SQL, Spring Boot, and Full-Stack Development
