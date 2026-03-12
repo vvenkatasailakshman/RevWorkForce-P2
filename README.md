@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # RevWorkforce HRM Application
 
 RevWorkforce is a full-stack monolithic Human Resource Management (HRM) web application.
@@ -43,3 +44,7 @@ From the project root directory, run the following command:
 - `src/main/java/com/rev/app/entity`: JPA Entities.
 - `src/main/resources/templates`: HTML Views.
 - `src/main/resources/static`: Assets (CSS/JS).
+=======
+# RevWorkForce-P2
+RevWorkforce is a full-stack monolithic Human Resource Management (HRM) web application designed to streamline employee management, leave tracking, and performance review processes.  The application features responsive design, role-based dashboards, and automated notifications.
+>>>>>>> 6deb37fa822a6942e24afb40b218b6f0353a2840
